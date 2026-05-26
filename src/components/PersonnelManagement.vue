@@ -32,7 +32,7 @@
         <span class="table-title">人员列表</span>
         <el-button type="primary" @click="openAdd">新增人员</el-button>
       </div>
-      <el-table :data="store.pagedList" border stripe style="width: 100%" height="0" class="flex-table">
+      <el-table :data="store.pagedList" border stripe style="width: 100%" class="flex-table">
         <el-table-column prop="name" label="姓名" width="100" />
         <el-table-column prop="phone" label="手机号" width="140" />
         <el-table-column prop="email" label="邮箱" min-width="180" />
@@ -204,13 +204,22 @@ function handleDelete(row: Personnel) {
 <style scoped>
 .page-container {
   height: 100%;
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
+  overflow: hidden;
+  background: #f0f2f5;
 }
 
-.search-card { flex-shrink: 0; }
+.search-card {
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+
+.search-card :deep(.el-card__body) { padding: 16px 20px 4px; }
 
 .search-form { margin-bottom: 0; }
 
@@ -219,6 +228,9 @@ function handleDelete(row: Personnel) {
   height: 0;
   display: flex;
   flex-direction: column;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
 }
 
 .table-card :deep(.el-card__body) {
@@ -226,24 +238,32 @@ function handleDelete(row: Personnel) {
   height: 0;
   display: flex;
   flex-direction: column;
+  overflow: auto;
+  padding: 20px;
 }
 
 .table-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   flex-shrink: 0;
 }
 
-.table-title { font-size: 16px; font-weight: 600; }
+.table-title { font-size: 15px; font-weight: 600; color: #1e293b; }
 
 .flex-table { flex: 1; }
 
 .pagination-wrap {
   display: flex;
   justify-content: flex-end;
-  margin-top: 16px;
+  margin-top: 14px;
   flex-shrink: 0;
+}
+
+:deep(.el-table th.el-table__cell) {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
 }
 </style>

@@ -44,9 +44,9 @@
         </div>
       </el-header>
 
-      <el-main class="main-content">
+      <div class="main-content">
         <router-view />
-      </el-main>
+      </div>
     </el-container>
   </el-container>
 </template>
@@ -94,13 +94,15 @@ const handleLogout = () => {
 }
 
 .logo {
-  height: 60px;
+  height: 59px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
 }
 
 .side-menu-list {
@@ -118,13 +120,15 @@ const handleLogout = () => {
   align-items: center;
   background: #fff;
   padding: 0 24px;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid #e8ecf1;
   flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,.03);
 }
 
 .page-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
+  color: #1e293b;
 }
 
 .top-right {
@@ -133,11 +137,13 @@ const handleLogout = () => {
   gap: 16px;
 }
 
+.user-info { color: #64748b; font-size: 14px; }
+
 .main-content {
   height: 0;
   flex: 1;
-  overflow: auto;
-  background: #f5f7fa;
-  padding: 0;
+  overflow: hidden;
+  background: #f0f2f5;
+  padding: 0 !important;
 }
 </style>

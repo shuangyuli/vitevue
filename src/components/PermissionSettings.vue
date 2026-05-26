@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <el-row class="full-height" :gutter="16">
-      <el-col :span="5" class="col-height">
+      <el-col :span="5" class="col-height" style="padding-right: 0;">
         <el-card class="full-card">
           <template #header>
             <div class="card-header">
@@ -23,7 +23,7 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :span="19" class="col-height">
+      <el-col :span="19" class="col-height" style="padding-left: 3px;">
         <el-card class="full-card" v-if="store.selectedRole">
           <template #header>
             <div class="card-header">
@@ -162,7 +162,12 @@ function handleDelete() {
 </script>
 
 <style scoped>
-.page-container { height: 100%; padding: 20px; }
+.page-container {
+  height: 100%;
+  padding: 16px;
+  overflow: hidden;
+  background: #f0f2f5;
+}
 
 .full-height { height: 100%; }
 
@@ -172,45 +177,64 @@ function handleDelete() {
   height: 100%;
   display: flex;
   flex-direction: column;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+
+.full-card :deep(.el-card__header) {
+  padding: 14px 20px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .full-card :deep(.el-card__body) {
   flex: 1;
   overflow: auto;
+  padding: 16px 20px;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 14px;
 }
 
 .role-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .role-item {
   padding: 12px 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: background 0.2s;
+  transition: all 0.15s;
+  border: 1px solid transparent;
 }
 
-.role-item:hover { background: #f0f2f5; }
+.role-item:hover {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
 
 .role-item.active {
-  background: #ecf5ff;
-  color: #409eff;
+  background: #eff6ff;
+  color: #3b82f6;
+  border-color: #bfdbfe;
 }
 
-.role-name { font-weight: 500; }
+.role-name { font-weight: 500; font-size: 14px; }
 
-.role-meta { font-size: 12px; color: #909399; }
+.role-meta { font-size: 12px; color: #94a3b8; }
+
+.role-item.active .role-meta { color: #60a5fa; }
 
 .empty-card {
   display: flex;
@@ -218,5 +242,9 @@ function handleDelete() {
   justify-content: center;
 }
 
-.empty-hint { color: #909399; font-size: 14px; }
+.empty-hint { color: #94a3b8; font-size: 14px; }
+
+:deep(.el-descriptions__label) {
+  background: #f8fafc;
+}
 </style>

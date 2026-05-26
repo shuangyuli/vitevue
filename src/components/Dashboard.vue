@@ -18,7 +18,7 @@
       <div class="row">
         <el-card class="map-card glass">
           <div class="card-title"><span class="dot teal"></span>中国地图</div>
-          <div ref="mapChartRef" class="map-chart" />
+          <div ref="mapChartRef" v-echarts-resize class="map-chart" />
         </el-card>
         <el-card class="chart-card glass">
           <div class="card-title"><span class="dot purple"></span>实时数据流</div>
@@ -219,7 +219,7 @@ const makeBarChart = () => {
 
 const initMapChart = async () => {
   if (!mapChartRef.value) return
-  const chinaJson = await fetch('./china.json').then(r => r.json())
+  const chinaJson = await fetch('/china.json').then(r => r.json())
   echarts.registerMap('china', chinaJson)
   const c = echarts.init(mapChartRef.value)
   c.setOption({
@@ -295,7 +295,7 @@ onUnmounted(() => {
     radial-gradient(ellipse at 80% 80%, rgba(0,206,209,0.06) 0%, transparent 55%),
     radial-gradient(ellipse at 50% 50%, rgba(100,80,255,0.04) 0%, transparent 70%);
   color: #fff;
-  padding: 20px;
+  padding: 16px 20px;
   box-sizing: border-box;
   overflow: hidden;
   position: relative;
@@ -323,7 +323,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   flex-shrink: 0;
 }
 
@@ -346,16 +346,23 @@ onUnmounted(() => {
 
 .content {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   overflow: hidden;
 }
 
 .row {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   flex: 1;
+  min-height: 0;
+}
+
+.bottom-row {
+  flex: none;
+  flex-shrink: 0;
 }
 
 .glass {
@@ -395,18 +402,19 @@ onUnmounted(() => {
   flex-direction: row !important;
   align-items: center;
   gap: 20px;
-  padding: 20px 24px;
+  padding: 16px 24px;
 }
 
 .card-title {
   font-size: 15px;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   color: #c8ddf8;
   letter-spacing: 1px;
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .dot {

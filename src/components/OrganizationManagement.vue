@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <el-row class="full-height" :gutter="16">
-      <el-col :span="7" class="col-height">
+      <el-col :span="7" class="col-height" style="padding-right: 0;">
         <el-card class="full-card">
           <template #header>
             <div class="card-header">
@@ -26,7 +26,7 @@
           </el-tree>
         </el-card>
       </el-col>
-      <el-col :span="17" class="col-height">
+      <el-col :span="17" class="col-height" style="padding-left: 3px;">
         <el-card class="full-card">
           <template #header>
             <div class="card-header">
@@ -200,7 +200,12 @@ function handleDeleteNode(node: OrgNode) {
 </script>
 
 <style scoped>
-.page-container { height: 100%; padding: 20px; }
+.page-container {
+  height: 100%;
+  padding: 16px;
+  overflow: hidden;
+  background: #f0f2f5;
+}
 
 .full-height { height: 100%; }
 
@@ -210,17 +215,29 @@ function handleDeleteNode(node: OrgNode) {
   height: 100%;
   display: flex;
   flex-direction: column;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+
+.full-card :deep(.el-card__header) {
+  padding: 14px 20px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .full-card :deep(.el-card__body) {
   flex: 1;
   overflow: auto;
+  padding: 16px 20px;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 14px;
 }
 
 .tree-node {
@@ -229,11 +246,12 @@ function handleDeleteNode(node: OrgNode) {
   align-items: center;
   flex: 1;
   padding-right: 8px;
+  font-size: 14px;
 }
 
 .tree-meta {
   font-size: 12px;
-  color: #909399;
+  color: #94a3b8;
 }
 
 .empty-hint {
@@ -241,7 +259,11 @@ function handleDeleteNode(node: OrgNode) {
   align-items: center;
   justify-content: center;
   height: 200px;
-  color: #909399;
+  color: #94a3b8;
   font-size: 14px;
+}
+
+:deep(.el-descriptions__label) {
+  background: #f8fafc;
 }
 </style>
