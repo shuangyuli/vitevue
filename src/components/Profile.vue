@@ -3,11 +3,19 @@
     <div class="profile-content">
       <div class="profile-top">
         <div class="avatar-section">
-          <div class="avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <div class="avatar" @click="triggerUpload" title="点击更换头像">
+            <img v-if="avatarUrl" :src="avatarUrl" class="avatar-img" />
+            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
             </svg>
+            <div class="avatar-overlay">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+            </div>
           </div>
+          <input ref="fileInput" type="file" accept="image/*" @change="handleAvatarChange" style="display: none" />
           <div class="avatar-info">
             <h2>{{ authStore.username || 'admin' }}</h2>
             <p>管理员</p>
@@ -65,6 +73,31 @@ import { useAuthStore } from '../stores/auth'
 
 const authStore = useAuthStore()
 const pwdFormRef = ref()
+const fileInput = ref<HTMLInputElement>()
+const avatarUrl = ref<string | null>(null)
+
+const triggerUpload = () => {
+  fileInput.value?.click()
+}
+
+const handleAvatarChange = (e: Event) => {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+
+  if (file.size > 2 * 1024 * 1024) {
+    ElMessage.warning('图片大小不能超过2MB')
+    return
+  }
+
+  const reader = new FileReader()
+  reader.onload = () => {
+    avatarUrl.value = reader.result as string
+    ElMessage.success('头像已更新')
+  }
+  reader.readAsDataURL(file)
+  input.value = ''
+}
 
 const pwdForm = reactive({
   oldPassword: '',
@@ -139,9 +172,42 @@ const changePassword = () => {
   align-items: center;
   justify-content: center;
   color: #fff;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .avatar svg { width: 32px; height: 32px; }
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.avatar-overlay svg {
+  width: 24px;
+  height: 24px;
+  color: #fff;
+}
+
+.avatar:hover .avatar-overlay {
+  opacity: 1;
+}
 
 .avatar-info h2 {
   margin: 0 0 2px;
