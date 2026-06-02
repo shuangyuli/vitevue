@@ -236,26 +236,27 @@ const submitForm = () => {
 }
 
 :deep(.el-input__wrapper) {
-  background: rgba(255, 255, 255);
+  background: rgba(255, 255, 255, 0.06);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
 
 :deep(.el-input__wrapper:hover) {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 :deep(.el-input__wrapper.is-focus) {
   box-shadow: 0 0 0 1px #3b82f6;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 :deep(.el-input__inner) {
-  color: #e2e8f0;
-  background: rgba(255, 255, 255);
+  color: #f1f5f9;
 }
 
 :deep(.el-input__inner::placeholder) {
-  color: #475569;
+  color: #64748b;
 }
 
 :deep(.el-input__suffix) {
@@ -272,5 +273,15 @@ const submitForm = () => {
 
 :deep(.el-form-item) {
   margin-bottom: 20px;
+}
+
+:deep(.el-alert) {
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+:deep(.el-alert__title) {
+  color: #fca5a5;
 }
 </style>

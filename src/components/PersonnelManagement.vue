@@ -50,6 +50,9 @@
             <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty description="暂无人员数据" :image-size="80" />
+        </template>
       </el-table>
       <div class="pagination-wrap">
         <el-pagination
@@ -265,5 +268,15 @@ function handleDelete(row: Personnel) {
   background: #f8fafc;
   color: #475569;
   font-weight: 600;
+}
+
+:deep(.el-button:focus-visible) {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.search-form :deep(.el-button) {
+  touch-action: manipulation;
 }
 </style>

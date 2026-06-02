@@ -38,7 +38,13 @@
               </div>
             </div>
           </template>
-          <div v-if="!currentNode" class="empty-hint">请从左侧选择部门查看详情</div>
+          <div v-if="!currentNode" class="empty-hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <path d="M3 21h18M3 21v-4m0 4h4M3 21l8-8M21 8v5M21 8h-5m5 0l-4 4" />
+              <circle cx="12" cy="3" r="2" />
+            </svg>
+            <span>请从左侧选择部门查看详情</span>
+          </div>
           <el-descriptions v-else :column="2" border>
             <el-descriptions-item label="名称">{{ currentNode.label }}</el-descriptions-item>
             <el-descriptions-item label="负责人">{{ currentNode.manager }}</el-descriptions-item>
@@ -256,14 +262,46 @@ function handleDeleteNode(node: OrgNode) {
 
 .empty-hint {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 200px;
   color: #94a3b8;
   font-size: 14px;
+  gap: 12px;
+}
+
+.empty-hint svg {
+  width: 64px;
+  height: 64px;
+  opacity: 0.3;
+}
+
+:deep(.el-tree-node__content) {
+  border-radius: 6px;
+  margin: 1px 0;
+  transition: background 0.15s;
+}
+
+:deep(.el-tree-node__content:hover) {
+  background: #f1f5f9;
+}
+
+:deep(.el-tree-node__content:focus-visible) {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+:deep(.el-tree-node.is-current > .el-tree-node__content) {
+  background: #eff6ff;
+  color: #3b82f6;
 }
 
 :deep(.el-descriptions__label) {
   background: #f8fafc;
+}
+
+.card-header :deep(.el-button) {
+  touch-action: manipulation;
 }
 </style>

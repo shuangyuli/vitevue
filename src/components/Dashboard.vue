@@ -219,10 +219,14 @@ const makeBarChart = () => {
 
 const initMapChart = async () => {
   if (!mapChartRef.value) return
-  const chinaJson = await fetch('/china.json').then(r => r.json())
-  echarts.registerMap('china', chinaJson)
-  const c = echarts.init(mapChartRef.value)
-  c.setOption({
+  try {
+    const chinaJson = await fetch('/china.json').then(r => {
+      if (!r.ok) throw new Error('地图数据加载失败')
+      return r.json()
+    })
+    echarts.registerMap('china', chinaJson)
+    const c = echarts.init(mapChartRef.value)
+    c.setOption({
     tooltip: {
       trigger: 'item',
       backgroundColor: 'rgba(6,18,40,0.92)',
@@ -259,9 +263,15 @@ const initMapChart = async () => {
       ],
     }],
   })
+  } catch {
+    if (mapChartRef.value) {
+      mapChartRef.value.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6b8db5;font-size:14px">地图数据加载失败，请稍后重试</div>'
+    }
+  }
 }
 
 let charts: echarts.ECharts[] = []
+let resizeObserver: ResizeObserver | null = null
 
 onMounted(() => {
   updateTime()
@@ -275,11 +285,17 @@ onMounted(() => {
     .map(r => echarts.getInstanceByDom(r.value!))
     .filter(Boolean) as echarts.ECharts[]
 
+  resizeObserver = new ResizeObserver(() => {
+    charts.forEach(c => c.resize())
+  })
+  const container = (document.querySelector('.content') as HTMLElement) || lineChartRef.value?.parentElement?.parentElement
+  if (container) resizeObserver.observe(container)
   window.addEventListener('resize', () => charts.forEach(c => c.resize()))
 })
 
 onUnmounted(() => {
   if (timer) clearInterval(timer)
+  if (resizeObserver) resizeObserver.disconnect()
   charts.forEach(c => c.dispose())
 })
 </script>
@@ -372,6 +388,7 @@ onUnmounted(() => {
   border-radius: 12px !important;
   box-shadow: 0 4px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04) !important;
   transition: border-color 0.3s, box-shadow 0.3s;
+  touch-action: manipulation;
 }
 
 .glass:hover {
@@ -492,10 +509,17 @@ onUnmounted(() => {
   font-size: 13px;
   transition: background 0.3s;
   align-items: baseline;
+  cursor: default;
 }
 
 .stream-item:hover {
   background: rgba(255,255,255,0.04);
+}
+
+.stream-item:focus-visible {
+  outline: 2px solid rgba(64,158,255,0.6);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 .stream-time {

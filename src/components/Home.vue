@@ -40,7 +40,7 @@
         </div>
         <div class="top-right">
           <span class="user-info">{{ authStore.username }}</span>
-          <el-button type="danger" size="small" @click="handleLogout">退出登录</el-button>
+          <el-button type="danger" size="small" @click="handleLogoutConfirm">退出登录</el-button>
         </div>
       </el-header>
 
@@ -54,6 +54,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { ElMessageBox } from 'element-plus'
 import { useAuthStore } from '../stores/auth'
 import { DataAnalysis, User, OfficeBuilding, Lock, UserFilled } from '@element-plus/icons-vue'
 
@@ -75,10 +76,15 @@ const handleMenuSelect = (index: string) => {
   router.push(index)
 }
 
-const handleLogout = () => {
-  authStore.logout()
-  router.push('/login')
+const handleLogoutConfirm = () => {
+  ElMessageBox.confirm('确定要退出登录吗？', '提示', { type: 'warning', confirmButtonText: '退出', cancelButtonText: '取消' })
+    .then(() => {
+      authStore.logout()
+      router.push('/login')
+    })
+    .catch(() => {})
 }
+
 </script>
 
 <style scoped>
@@ -145,5 +151,20 @@ const handleLogout = () => {
   overflow: hidden;
   background: #f0f2f5;
   padding: 0 !important;
+}
+
+:deep(.el-menu-item.is-active) {
+  background: linear-gradient(90deg, rgba(59,130,246,0.25) 0%, rgba(59,130,246,0.05) 100%) !important;
+  border-right: 3px solid #3b82f6;
+}
+
+:deep(.el-menu-item:focus-visible) {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+:deep(.el-menu-item:hover) {
+  background: rgba(255,255,255,0.06) !important;
 }
 </style>

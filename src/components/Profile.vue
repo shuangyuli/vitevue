@@ -3,19 +3,19 @@
     <div class="profile-content">
       <div class="profile-top">
         <div class="avatar-section">
-          <div class="avatar" @click="triggerUpload" title="点击更换头像">
-            <img v-if="avatarUrl" :src="avatarUrl" class="avatar-img" />
-            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <div class="avatar" @click="triggerUpload" @keydown.enter="triggerUpload" @keydown.space.prevent="triggerUpload" title="点击更换头像" tabindex="0" role="button" aria-label="更换头像">
+            <img v-if="avatarUrl" :src="avatarUrl" class="avatar-img" alt="用户头像" />
+            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
             </svg>
-            <div class="avatar-overlay">
+            <div class="avatar-overlay" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
                 <circle cx="12" cy="13" r="4" />
               </svg>
             </div>
           </div>
-          <input ref="fileInput" type="file" accept="image/*" @change="handleAvatarChange" style="display: none" />
+          <input ref="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" @change="handleAvatarChange" style="display: none" />
           <div class="avatar-info">
             <h2>{{ authStore.username || 'admin' }}</h2>
             <p>管理员</p>
@@ -237,5 +237,20 @@ const changePassword = () => {
   font-size: 15px;
   font-weight: 600;
   color: #334155;
+}
+
+.avatar:focus-visible {
+  outline: 3px solid #3b82f6;
+  outline-offset: 3px;
+}
+
+:deep(.el-button:focus-visible) {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+:deep(.el-button) {
+  touch-action: manipulation;
 }
 </style>
