@@ -69,6 +69,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as echarts from 'echarts'
+import api from '../api'
 
 const lineChartRef = ref<HTMLDivElement | null>(null)
 const barChartRef = ref<HTMLDivElement | null>(null)
@@ -97,6 +98,24 @@ const dataStream = ref([
 ])
 
 let timer: number | null = null
+
+const fetchDashboardData = async () => {
+  try {
+    const [mRes, sRes] = await Promise.all([
+      api.get('/dashboard/metrics'),
+      api.get('/dashboard/realtime-stream'),
+    ])
+    if (mRes.data.code === 200) {
+      const m = mRes.data.data
+      metrics.value = { visits: m.visits, visitsChange: m.visitsChange, orders: m.orders, ordersChange: m.ordersChange, revenue: String(m.revenue), revenueChange: m.revenueChange }
+    }
+    if (sRes.data.code === 200) {
+      dataStream.value = sRes.data.data.map((item: { id: string; time: string; message: string }) => ({
+        id: Number(item.id), time: item.time, message: item.message,
+      }))
+    }
+  } catch {}
+}
 
 const updateTime = () => {
   currentTime.value = new Date().toLocaleString('zh-CN')
@@ -275,6 +294,7 @@ let resizeObserver: ResizeObserver | null = null
 
 onMounted(() => {
   updateTime()
+  fetchDashboardData()
   timer = window.setInterval(() => { updateTime(); updateMetrics(); updateDataStream() }, 5000)
 
   makeLineChart()

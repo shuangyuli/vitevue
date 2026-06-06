@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import api from '../api'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string>(localStorage.getItem('token') || '')
@@ -7,29 +8,28 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref<boolean>(!!token.value)
 
   const login = async (user: string, password: string, remember: boolean): Promise<void> => {
-    // Mock API — replace with real request
-    await new Promise(resolve => setTimeout(resolve, 800))
-
-    if (user === 'admin' && password === 'admin123') {
-      const fakeToken = 'token_' + Date.now()
-      token.value = fakeToken
-      username.value = user
+    const { data } = await api.post('/auth/login', { username: user, password, remember })
+    if (data.code === 200) {
+      const t = data.data.token
+      const u = data.data.username
+      token.value = t
+      username.value = u
       isAuthenticated.value = true
 
       if (remember) {
-        localStorage.setItem('token', fakeToken)
-        localStorage.setItem('username', user)
+        localStorage.setItem('token', t)
+        localStorage.setItem('username', u)
       } else {
-        sessionStorage.setItem('token', fakeToken)
-        sessionStorage.setItem('username', user)
+        sessionStorage.setItem('token', t)
+        sessionStorage.setItem('username', u)
       }
       return
     }
-
-    throw new Error('用户名或密码错误')
+    throw new Error(data.message || '登录失败')
   }
 
   const logout = () => {
+    api.post('/auth/logout').catch(() => {})
     token.value = ''
     username.value = ''
     isAuthenticated.value = false

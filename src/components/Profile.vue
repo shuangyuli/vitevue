@@ -31,12 +31,12 @@
               <span class="card-hd">基本信息</span>
             </template>
             <el-descriptions :column="1" border>
-              <el-descriptions-item label="用户名">admin</el-descriptions-item>
-              <el-descriptions-item label="邮箱">admin@example.com</el-descriptions-item>
-              <el-descriptions-item label="手机号">138****0001</el-descriptions-item>
-              <el-descriptions-item label="部门">技术部</el-descriptions-item>
-              <el-descriptions-item label="角色">管理员</el-descriptions-item>
-              <el-descriptions-item label="注册日期">2024-01-15</el-descriptions-item>
+              <el-descriptions-item label="用户名">{{ profile.username || 'admin' }}</el-descriptions-item>
+              <el-descriptions-item label="邮箱">{{ profile.email || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="手机号">{{ profile.phone || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="部门">{{ profile.department || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="角色">{{ profile.role || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="注册日期">{{ profile.registerDate || '-' }}</el-descriptions-item>
             </el-descriptions>
           </el-card>
         </el-col>
@@ -67,11 +67,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '../stores/auth'
+import api from '../api'
 
 const authStore = useAuthStore()
+const profile = ref<Record<string, string>>({})
+
+onMounted(async () => {
+  try {
+    const { data } = await api.get('/user/profile')
+    if (data.code === 200) profile.value = data.data
+  } catch {}
+})
 const pwdFormRef = ref()
 const fileInput = ref<HTMLInputElement>()
 const avatarUrl = ref<string | null>(null)
@@ -125,15 +134,19 @@ const pwdRules = {
   ],
 }
 
-const changePassword = () => {
-  pwdFormRef.value.validate((valid: boolean) => {
-    if (!valid) return
-    ElMessage.success('密码修改成功（Mock）')
+const changePassword = async () => {
+  const valid = await pwdFormRef.value.validate().catch(() => false)
+  if (!valid) return
+  try {
+    await api.put('/user/password', { oldPassword: pwdForm.oldPassword, newPassword: pwdForm.newPassword })
+    ElMessage.success('密码修改成功')
     pwdForm.oldPassword = ''
     pwdForm.newPassword = ''
     pwdForm.confirmPassword = ''
     pwdFormRef.value.resetFields()
-  })
+  } catch {
+    ElMessage.error('密码修改失败')
+  }
 }
 </script>
 

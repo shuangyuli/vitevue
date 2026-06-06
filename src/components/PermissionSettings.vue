@@ -85,11 +85,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { usePermissionStore } from '../stores/permission'
 
 const store = usePermissionStore()
+onMounted(() => { store.fetchRoles(); store.fetchPermissions() })
 const dialogVisible = ref(false)
 const editingRole = ref(false)
 const formRef = ref()
@@ -106,9 +107,9 @@ function selectRole(id: number) {
   store.selectRole(id)
 }
 
-function handlePermissionCheck(_node: any, checked: { checkedKeys: string[] }) {
+async function handlePermissionCheck(_node: any, checked: { checkedKeys: string[] }) {
   if (store.selectedRole) {
-    store.updateRolePermissions(store.selectedRole.id, checked.checkedKeys)
+    await store.updateRolePermissions(store.selectedRole.id, checked.checkedKeys)
     ElMessage.success('权限已更新')
   }
 }
@@ -138,26 +139,26 @@ function resetForm() {
   formRef.value?.resetFields()
 }
 
-function submitForm() {
-  formRef.value.validate((valid: boolean) => {
-    if (!valid) return
-    if (editingRole.value && store.selectedRole) {
-      store.updateRole(store.selectedRole.id, { name: form.name, description: form.description, permissions: form.permissions })
-      ElMessage.success('修改成功')
-    } else {
-      store.addRole({ name: form.name, description: form.description, permissions: form.permissions })
-      ElMessage.success('新增成功')
-    }
-    dialogVisible.value = false
-  })
+async function submitForm() {
+  const valid = await formRef.value.validate().catch(() => false)
+  if (!valid) return
+  if (editingRole.value && store.selectedRole) {
+    await store.updateRole(store.selectedRole.id, { name: form.name, description: form.description, permissions: form.permissions })
+    ElMessage.success('修改成功')
+  } else {
+    await store.addRole({ name: form.name, description: form.description, permissions: form.permissions })
+    ElMessage.success('新增成功')
+  }
+  dialogVisible.value = false
 }
 
-function handleDelete() {
+async function handleDelete() {
   if (!store.selectedRole) return
-  ElMessageBox.confirm(`确认删除角色「${store.selectedRole.name}」？`, '提示', { type: 'warning' }).then(() => {
-    store.deleteRole(store.selectedRole!.id)
+  try {
+    await ElMessageBox.confirm(`确认删除角色「${store.selectedRole.name}」？`, '提示', { type: 'warning' })
+    await store.deleteRole(store.selectedRole!.id)
     ElMessage.success('删除成功')
-  }).catch(() => {})
+  } catch {}
 }
 </script>
 

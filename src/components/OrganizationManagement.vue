@@ -110,11 +110,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useOrganizationStore, type OrgNode } from '../stores/organization'
 
 const store = useOrganizationStore()
+onMounted(() => store.fetchTree())
 const currentNode = ref<OrgNode | null>(null)
 const dialogVisible = ref(false)
 const editingNode = ref<OrgNode | null>(null)
@@ -173,35 +174,36 @@ function resetForm() {
   formRef.value?.resetFields()
 }
 
-function submitForm() {
-  formRef.value.validate((valid: boolean) => {
-    if (!valid) return
-    if (editingNode.value) {
-      store.updateNode(editingNode.value.id, { ...form })
-      ElMessage.success('修改成功')
-    } else {
-      store.addNode(parentId.value, { ...form })
-      ElMessage.success('新增成功')
-    }
-    dialogVisible.value = false
-  })
+async function submitForm() {
+  const valid = await formRef.value.validate().catch(() => false)
+  if (!valid) return
+  if (editingNode.value) {
+    await store.updateNode(editingNode.value.id, { ...form })
+    ElMessage.success('修改成功')
+  } else {
+    await store.addNode(parentId.value, { ...form })
+    ElMessage.success('新增成功')
+  }
+  dialogVisible.value = false
 }
 
-function handleDelete() {
+async function handleDelete() {
   if (!currentNode.value) return
-  ElMessageBox.confirm(`确认删除部门「${currentNode.value.label}」？子部门将上移。`, '提示', { type: 'warning' }).then(() => {
-    store.deleteNode(currentNode.value!.id)
+  try {
+    await ElMessageBox.confirm(`确认删除部门「${currentNode.value.label}」？子部门将上移。`, '提示', { type: 'warning' })
+    await store.deleteNode(currentNode.value!.id)
     currentNode.value = null
     ElMessage.success('删除成功')
-  }).catch(() => {})
+  } catch {}
 }
 
-function handleDeleteNode(node: OrgNode) {
-  ElMessageBox.confirm(`确认删除部门「${node.label}」？`, '提示', { type: 'warning' }).then(() => {
-    store.deleteNode(node.id)
+async function handleDeleteNode(node: OrgNode) {
+  try {
+    await ElMessageBox.confirm(`确认删除部门「${node.label}」？`, '提示', { type: 'warning' })
+    await store.deleteNode(node.id)
     if (currentNode.value?.id === node.id) currentNode.value = null
     ElMessage.success('删除成功')
-  }).catch(() => {})
+  } catch {}
 }
 </script>
 
